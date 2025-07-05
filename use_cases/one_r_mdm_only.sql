@@ -1,0 +1,2 @@
+-- done
+SELECT * FROM mdm;

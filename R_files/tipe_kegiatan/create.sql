@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS tipe_kegiatan (
+  id INT PRIMARY KEY,
+  name VARCHAR(128),
+  create_by VARCHAR(32),
+  create_date TIMESTAMP
+);
+
+INSERT INTO
+  tipe_kegiatan (id, name, create_by, create_date)
+VALUES
+  (366,'EKSPLORASI','SYSTEM','2024-07-25 00:00:00'),
+  (367,'EKSPLOITASI','SYSTEM','2024-07-25 00:00:00'),
+  (368,'OPEN AREA','SYSTEM','2024-09-24 00:00:00'),
+  (369,'EKSPLORASI WT',NULL,'2024-07-25 00:00:00'),
+  (370,'RECLASS EKSPLOITASI',NULL,'2024-07-25 00:00:00');
