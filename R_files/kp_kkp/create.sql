@@ -46,12 +46,9 @@ CREATE TABLE IF NOT EXISTS kp_kkp (
 CREATE OR REPLACE FUNCTION insert_hdr_id_kp_kkp()
 RETURNS TRIGGER AS $$
 DECLARE
-  tipe_kegiatan_id_varchar VARCHAR(8);
-  komitmen_id_varchar VARCHAR(8);
-  jenis_kegiatan_id_varchar VARCHAR(8);
-  hdr_psc_id_varchar VARCHAR(8);
   res VARCHAR(32);
   cek_exists BOOL := false;
+  new_hdr_id INT;
   exists_hdr_id INT;
 BEGIN
   exists_hdr_id := (
@@ -63,28 +60,25 @@ BEGIN
   );
 
   IF exists_hdr_id IS NOT NULL THEN
-    NEW.hdr_id := exists_hdr_id;
+    new_hdr_id := (exists_hdr_id);
   ELSE
     INSERT INTO
       header (komitmen_id, tipe_kegiatan_id, create_by, jenis_kegiatan_id, hdr_psc_id, area_id, basin_id)
     VALUES
-      (NEW.komitmen_id, NEW.tipe_kegiatan_id, 'MANUAL', NEW.jenis_kegiatan_id, NEW.hdr_psc_id, NEW.area_id, NEW.basin_id);
-    
-    NEW.hdr_id := (
-      SELECT hdr_id FROM header WHERE
-      komitmen_id = NEW.komitmen_id AND
-      tipe_kegiatan_id = NEW.tipe_kegiatan_id AND
-      jenis_kegiatan_id = NEW.jenis_kegiatan_id AND
-      hdr_psc_id = NEW.hdr_psc_id
-    );
+      (NEW.komitmen_id, NEW.tipe_kegiatan_id, 'MANUAL', NEW.jenis_kegiatan_id, NEW.hdr_psc_id, NEW.area_id, NEW.basin_id)
+    RETURNING hdr_id INTO new_hdr_id;
   END IF;
+
+  UPDATE kp_kkp
+  SET hdr_id = new_hdr_id
+  WHERE table_id = NEW.table_id;
 
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER insert_hdr_id_on_kp_kkp_table
-BEFORE INSERT
+AFTER INSERT
 ON kp_kkp
 FOR EACH ROW
 EXECUTE PROCEDURE insert_hdr_id_kp_kkp();
