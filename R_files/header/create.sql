@@ -59,9 +59,8 @@ BEGIN
   res := tipe_kegiatan_id_varchar || komitmen_id_varchar || jenis_kegiatan_id_varchar || hdr_psc_id_varchar;
   NEW.cek := (res);
 
-  -- check if cek exists
   IF NEW.hdr_id IS NULL THEN
-    NEW.hdr_id := (SELECT COALESCE(MAX(hdr_id), 0) + 1 FROM header);
+      NEW.hdr_id := (SELECT COALESCE(MAX(hdr_id), 0) + 1 FROM header);
   END IF;
 
   RETURN NEW;
@@ -73,7 +72,6 @@ BEFORE INSERT
 ON header
 FOR EACH ROW
 EXECUTE PROCEDURE insert_cek();
-
 
 -- NOTE: header table inserts
 INSERT INTO
